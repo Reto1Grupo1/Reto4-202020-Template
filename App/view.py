@@ -51,3 +51,85 @@ operación seleccionada.
 """
 Menu principal
 """
+def printMenu():
+    print("\n")
+    print("*******************************************")
+    print("Bienvenido")
+    print("1- Inicializar Analizador")
+    print("2- Cargar información de buses de singapur")
+    print("3- Cantidad de clusters de Viajes ")
+    print("4- Ruta turística Circular ")
+    print("5- Estaciones críticas ")
+    print("6- Ruta turística por resistencia ")
+    print("7- Recomendador de Rutas  ")
+    print("8- Ruta de interés turístico   ")
+    print("9- Identificación de Estaciones para Publicidad ")  
+    print("10-  Identificación de Bicicletas para Mantenimiento ")  
+
+
+    print("0- Salir")
+    print("*******************************************")
+
+"-------------------------------------------------------------"
+def optionTwo():
+    print("\nCargando información de transporte de singapur ....")
+    controller.loadTrips(cont)
+    numedges = controller.totalConnections(cont)
+    numvertex = controller.totalStops(cont)
+    print('Numero de vertices: ' + str(numvertex))
+    print('Numero de arcos: ' + str(numedges))
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+Menu principal
+"""
+while True:
+    printMenu()
+    inputs = input('Seleccione una opción para continuar\n>')
+
+    if int(inputs[0]) == 1:
+        print("\nInicializando....")
+        # cont es el controlador que se usará de acá en adelante
+        cont = controller.init()
+
+    elif int(inputs[0]) == 2:
+        executiontime = timeit.timeit(optionTwo, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
+    elif int(inputs[0]) == 3:
+        executiontime = timeit.timeit(optionOne, number=1)
+        print("Tiempo de ejecución: " + str(executiontime))
+
+    elif int(inputs[0]) == 4:
+        x
+
+    elif int(inputs[0]) == 5:
+        x
+
+    elif int(inputs[0]) == 6:
+        x
+
+    elif int(inputs[0]) == 7:
+        x
+    elif int(inputs[0]) == 8:
+        x
+    elif int(inputs[0]) == 9:
+        x
+    elif int(inputs[0]) == 10:
+       x
+    else:
+        sys.exit(0)
+sys.exit(0)

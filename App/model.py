@@ -43,10 +43,84 @@ de creacion y consulta sobre las estructuras de datos.
 # -----------------------------------------------------
 
 # Funciones para agregar informacion al grafo
+def newAnalyzer():
+    """ Inicializa el analizador
+
+   stops: Tabla de hash para guardar los vertices del grafo
+   connections: Grafo para representar las rutas entre estaciones
+   components: Almacena la informacion de los componentes conectados
+   paths: Estructura que almancena los caminos de costo minimo desde un
+           vertice determinado a todos los otros vértices del grafo
+    """
+    citibike = {
+                'graph': None
+                }
+
+    citibike['graph'] = gr.newGraph(datastructure='ADJ_LIST',
+                                          directed=True,
+                                          size=14000,
+                                          comparefunction=compareStopIds)
+    return citibike
+
+# Funciones para agregar informacion al grafo
+
+def addTrip(citibike, trip):
+    """
+    """
+    try:
+        origin = trip['start station id']
+        destination = trip['end station id']
+        duration = int(trip['tripduration'])
+        addStation(citibike, origin)
+        addStation(citibike, destination)
+        addConnection(citibike, origin, destination, duration)
+    except Exception as exp:
+        error.reraise(exp, 'model:addTrip')
+
+
+def addStation(citibike, stationid):
+    """
+    Adiciona un viaje como un vertice del grafo
+    """
+    try:
+        if not gr.containsVertex(citibike['graph'], stationid):
+            gr.insertVertex(citibike['graph'], stationid)
+        return citibike
+    except Exception as exp:
+        error.reraise(exp, 'model:addStation')
+
+
+
+
+
+
+
+
+def addConnection(citibike, origin, destination, duration):
+    """
+    Adiciona un arco entre dos estaciones
+    """
+    edge = gr.getEdge(citibike ["graph"], origin, destination)
+    if edge is None:
+        gr.addEdge(citibike["graph"], origin, destination, duration)
+    return citibike
+
 
 # ==============================
 # Funciones de consulta
 # ==============================
+def totalStops(citibike):
+    """
+    Retorna el total de estaciones (vertices) del grafo
+    """
+    return gr.numVertices(citibike['graph'])
+
+
+def totalConnections(citibike):
+    """
+    Retorna el total arcos del grafo
+    """
+    return gr.numEdges(citibike['graph'])
 
 # ==============================
 # Funciones Helper
@@ -55,3 +129,15 @@ de creacion y consulta sobre las estructuras de datos.
 # ==============================
 # Funciones de Comparacion
 # ==============================
+
+def compareStopIds(stop, keyvaluestop):
+    """
+    Compara dos estaciones
+    """
+    stopcode = keyvaluestop['key']
+    if (stop == stopcode):
+        return 0
+    elif (stop > stopcode):
+        return 1
+    else:
+        return -1
