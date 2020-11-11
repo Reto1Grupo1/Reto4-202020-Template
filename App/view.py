@@ -99,6 +99,7 @@ while True:
         executiontime = timeit.timeit(optionTwo, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
 
+
     elif int(inputs[0]) == 3:
         station1=input("Estacion 1: ")
         station2=input("Estacion 2: ")
