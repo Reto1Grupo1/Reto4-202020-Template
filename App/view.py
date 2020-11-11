@@ -30,6 +30,7 @@ import config
 from App import controller
 from DISClib.ADT import stack
 import timeit
+from DISClib.ADT import list as lt
 assert config
 
 """
@@ -102,8 +103,10 @@ while True:
         station1=input("Estacion 1: ")
         station2=input("Estacion 2: ")
         lo=controller.requerimiento1(cont["graph"],station1,station2)
-        print(lo)
-   
+        print("El total de componentes fuertemente conectados es ")
+        print(lt.firstElement(lo))
+        print("Existe la conexion")
+        print(lt.lastElement(lo))
 
     elif int(inputs[0]) == 4:
         x

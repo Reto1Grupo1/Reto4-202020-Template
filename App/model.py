@@ -90,7 +90,7 @@ def addStation(citibike, stationid):
         error.reraise(exp, 'model:addStation')
 
 def updateAverageWeight(edge,weight):
-    newweight=(int(edge["weight"]*edge["count"]+ int(weight) / int(edge["count"]+1)))
+    newweight=float(float(edge["weight"])*float(edge["count"])+ float(weight) / float(edge["count"]+1))
     edge["weight"]=newweight
     edge["count"]+=1
 
@@ -127,8 +127,10 @@ def requerimiento1(graph,station1,station2):
     sc=scc.KosarajuSCC(graph)
     MaxGraph=numSCC(graph)
     MaxStations=sameCC(sc,station1,station2)
-    b=(MaxGraph,MaxStations)
-    return b
+    retorno=lt.newList("ARRAY_LIST",compareIds)
+    lt.addLast(retorno,MaxGraph)
+    lt.addLast(retorno,MaxStations)
+    return retorno
 
 def numSCC(graph):
     sc = scc.KosarajuSCC(graph)
@@ -154,6 +156,17 @@ def compareStopIds(stop, keyvaluestop):
     if (stop == stopcode):
         return 0
     elif (stop > stopcode):
+        return 1
+    else:
+        return -1
+
+def compareIds(id1, id2):
+    """
+    Compara dos crimenes
+    """
+    if (id1 == id2):
+        return 0
+    elif id1 > id2:
         return 1
     else:
         return -1
