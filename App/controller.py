@@ -48,10 +48,13 @@ def init():
 #  de datos en los modelos
 # ___________________________________________________
 def loadTrips(citibike):
+    viajes=0
     for filename in os.listdir(cf.data_dir):
+        
         if filename.endswith('.csv'):
             print('Cargando archivo: ' + filename)
-            loadFile(citibike, filename)
+            viajes+=loadFile(citibike, filename)
+    print("viajes totales: "+str(viajes))
     return citibike
 
 def loadFile(citibike, tripfile):
@@ -60,10 +63,11 @@ def loadFile(citibike, tripfile):
     tripfile = cf.data_dir + tripfile
     input_file = csv.DictReader(open(tripfile, encoding="utf-8"),
                                 delimiter=",")
+    viajes=0
     for trip in input_file:
-        
+        viajes+=1
         model.addTrip(citibike, trip)
-    return citibike
+    return viajes
 
 # ___________________________________________________
 #  Funciones para consultas
