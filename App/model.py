@@ -28,7 +28,7 @@ from DISClib.ADT.graph import gr
 from DISClib.ADT import map as m
 from DISClib.ADT import list as lt
 from DISClib.DataStructures import listiterator as it
-from DISClib.Algorithms.Graphs import scc
+from DISClib.Algorithms.Graphs import scc as scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
 assert config
@@ -89,12 +89,10 @@ def addStation(citibike, stationid):
     except Exception as exp:
         error.reraise(exp, 'model:addStation')
 
-
-
-
-
-
-
+def updateAverageWeight(edge,weight):
+    newweight=(int(edge["weight"]*edge["count"]+ int(weight) / int(edge["count"]+1)))
+    edge["weight"]=newweight
+    edge["count"]+=1
 
 def addConnection(citibike, origin, destination, duration):
     """
@@ -103,6 +101,8 @@ def addConnection(citibike, origin, destination, duration):
     edge = gr.getEdge(citibike ["graph"], origin, destination)
     if edge is None:
         gr.addEdge(citibike["graph"], origin, destination, duration)
+    else:
+        updateAverageWeight(edge,destination)
     return citibike
 
 
@@ -121,6 +121,22 @@ def totalConnections(citibike):
     Retorna el total arcos del grafo
     """
     return gr.numEdges(citibike['graph'])
+
+
+def requerimiento1(graph,station1,station2):
+    sc=scc.KosarajuSCC(graph)
+    MaxGraph=numSCC(graph)
+    MaxStations=sameCC(sc,station1,station2)
+    b=(MaxGraph,MaxStations)
+    return b
+
+def numSCC(graph):
+    sc = scc.KosarajuSCC(graph)
+    return scc.connectedComponents(sc)
+
+def sameCC(sc, station1, station2):
+    return scc.stronglyConnected(sc, station1, station2)
+
 
 # ==============================
 # Funciones Helper

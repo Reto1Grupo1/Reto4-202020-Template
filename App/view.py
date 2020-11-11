@@ -72,24 +72,13 @@ def printMenu():
 
 "-------------------------------------------------------------"
 def optionTwo():
-    print("\nCargando información de transporte de singapur ....")
+    print("\nCargando información de transporte de bicicleta ....")
     controller.loadTrips(cont)
     numedges = controller.totalConnections(cont)
     numvertex = controller.totalStops(cont)
     print('Numero de vertices: ' + str(numvertex))
     print('Numero de arcos: ' + str(numedges))
-   
-
-
-
-
-
-
-
-
-
-
-
+    
 
 
 
@@ -110,8 +99,11 @@ while True:
         print("Tiempo de ejecución: " + str(executiontime))
 
     elif int(inputs[0]) == 3:
-        executiontime = timeit.timeit(optionOne, number=1)
-        print("Tiempo de ejecución: " + str(executiontime))
+        station1=input("Estacion 1: ")
+        station2=input("Estacion 2: ")
+        lo=controller.requerimiento1(cont["graph"],station1,station2)
+        print(lo)
+   
 
     elif int(inputs[0]) == 4:
         x

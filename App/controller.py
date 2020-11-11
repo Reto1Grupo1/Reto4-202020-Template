@@ -88,4 +88,7 @@ def connectedComponents(analyzer):
     """
     return model.connectedComponents(analyzer)
 
+def requerimiento1(catalog,station1,station2):
+    return model.requerimiento1(catalog,station1,station2)
+
 
