@@ -102,7 +102,7 @@ def addConnection(citibike, origin, destination, duration):
     if edge is None:
         gr.addEdge(citibike["graph"], origin, destination, duration)
     else:
-        updateAverageWeight(edge,destination)
+        updateAverageWeight(edge,duration)
     return citibike
 
 
@@ -131,6 +131,8 @@ def requerimiento1(graph,station1,station2):
     lt.addLast(retorno,MaxGraph)
     lt.addLast(retorno,MaxStations)
     return retorno
+
+
 
 def numSCC(graph):
     sc = scc.KosarajuSCC(graph)

@@ -30,6 +30,7 @@ import config
 from App import controller
 from DISClib.ADT import stack
 import timeit
+from DISClib.ADT.graph import gr
 from DISClib.ADT import list as lt
 assert config
 
@@ -101,8 +102,8 @@ while True:
 
 
     elif int(inputs[0]) == 3:
-        station1=input("Estacion 1: ")
-        station2=input("Estacion 2: ")
+        station1=str(input("Estacion 1: "))
+        station2=str(input("Estacion 2: "))
         lo=controller.requerimiento1(cont["graph"],station1,station2)
         print("El total de componentes fuertemente conectados es ")
         print(lt.firstElement(lo))
@@ -110,7 +111,7 @@ while True:
         print(lt.lastElement(lo))
 
     elif int(inputs[0]) == 4:
-        x
+        print(gr.getEdge(cont["graph"],"72","505"))
 
     elif int(inputs[0]) == 5:
         x
