@@ -122,7 +122,7 @@ while True:
     elif int(inputs[0]) == 7:
         x
     elif int(inputs[0]) == 8:
-        station1=str(input("Estacion 1: "))
+        station1=str(input("Estacion Inicial : "))
         Tiempo=int(input("Tiempo estimado en minutos:"))
         tr=controller.requemiento4(Tiempo,station1,cont)
         size=int(lt.size(tr))
