@@ -94,5 +94,6 @@ def connectedComponents(analyzer):
 
 def requerimiento1(catalog,station1,station2):
     return model.requerimiento1(catalog,station1,station2)
-
+def requemiento4(tiempo,StationI,catalog):
+    return model.requerimiento4(tiempo,StationI,catalog)
 

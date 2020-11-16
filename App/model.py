@@ -132,7 +132,17 @@ def requerimiento1(graph,station1,station2):
     lt.addLast(retorno,MaxGraph)
     lt.addLast(retorno,MaxStations)
     return retorno
-
+def requerimiento4(time,InitialS,citibike):
+    time=int(time)*60
+    rango=int(gr.outdegree(citibike["graph"],str(InitialS)))
+    listD=gr.adjacentEdges(citibike["graph"],str(InitialS))
+    Lista=lt.newList("ARRAY_LIST",compareIds)
+    for i in range(1,int(rango+1)):
+        Arco=lt.getElement(listD,i)
+        MaxTime=int(Arco["weight"])
+        if MaxTime <= time:
+            lt.addLast(Lista,Arco)
+    return Lista
 
 
 def numSCC(graph):

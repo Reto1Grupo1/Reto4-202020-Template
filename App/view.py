@@ -29,6 +29,7 @@ import sys
 import config
 from App import controller
 from DISClib.ADT import stack
+import datetime
 import timeit
 from DISClib.ADT.graph import gr
 from DISClib.ADT import list as lt
@@ -111,8 +112,7 @@ while True:
         print(lt.lastElement(lo))
 
     elif int(inputs[0]) == 4:
-        print(gr.getEdge(cont["graph"],"72","505"))
-
+        x
     elif int(inputs[0]) == 5:
         x
 
@@ -122,7 +122,14 @@ while True:
     elif int(inputs[0]) == 7:
         x
     elif int(inputs[0]) == 8:
-        x
+        station1=str(input("Estacion 1: "))
+        Tiempo=int(input("Tiempo estimado en minutos:"))
+        tr=controller.requemiento4(Tiempo,station1,cont)
+        size=int(lt.size(tr))
+        for i in range(0,size+1):
+            info=lt.getElement(tr,i)
+            peso=str(datetime.timedelta(seconds=int(info["weight"])))
+            print("Estacion Inicial "+str(station1)+" Estacion Final "+str(info["vertexB"]) + " Duracion Estimada "+str(peso[2:7]))
     elif int(inputs[0]) == 9:
         x
     elif int(inputs[0]) == 10:
