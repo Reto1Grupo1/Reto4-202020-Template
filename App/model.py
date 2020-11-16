@@ -90,8 +90,9 @@ def addStation(citibike, stationid):
         error.reraise(exp, 'model:addStation')
 
 def updateAverageWeight(edge,weight):
-    newweight=float(float(edge["weight"])*float(edge["count"])+ float(weight) / float(edge["count"]+1))
-    edge["weight"]=newweight
+    weight=int(weight)
+    newweight=(((int(edge["weight"]))*(int(edge["count"])) + (weight)) / (int(edge["count"]+1)))
+    edge["weight"]=int(newweight)
     edge["count"]+=1
 
 def addConnection(citibike, origin, destination, duration):
