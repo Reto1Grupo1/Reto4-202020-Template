@@ -106,22 +106,31 @@ while True:
         station1=str(input("Estacion 1: "))
         station2=str(input("Estacion 2: "))
         lo=controller.requerimiento1(cont["graph"],station1,station2)
-        print("El total de componentes fuertemente conectados es ")
+        print("El total de componentes fuertemente conectados es: ")
         print(lt.firstElement(lo))
-        print("Existe la conexion")
+        print("Existe la conexion:")
         print(lt.lastElement(lo))
 
     elif int(inputs[0]) == 4:
         x
     elif int(inputs[0]) == 5:
-        x
+        lista1,lista2,lista3=controller.requerimiento3(cont["graph"],cont["llegadas"],cont["id"])
+        print(lista1)
+        print(lista2)
+        print(lista3)
+        print("Estaciones de salida:")
+        for j in range(1,4):
+            print((lt.getElement(lista1,j)))
+        print("---------------------------------------------")
+        print("Estaciones de Salida:")
+        for j in range(1,4):
+            print(lt.getElement(lista2,j))
+        print("---------------------------------------------")
+        print("Estaciones menos usadas")
+        for j in range(1,4):
+            print(lt.getElement(lista3,j))
 
     elif int(inputs[0]) == 6:
-        x
-
-    elif int(inputs[0]) == 7:
-        x
-    elif int(inputs[0]) == 8:
         station1=str(input("Estacion Inicial : "))
         Tiempo=int(input("Tiempo estimado en minutos:"))
         tr=controller.requemiento4(Tiempo,station1,cont)
@@ -131,6 +140,21 @@ while True:
             peso=str(datetime.timedelta(seconds=int(info["weight"])))
             print("Estacion Inicial "+str(station1)+" Estacion Final "+str(info["vertexB"]) + " Duracion Estimada "+str(peso[2:7]))
     elif int(inputs[0]) == 9:
+        x
+    elif int(inputs[0]) == 7:
+        edad=input("Dígite su edad:")
+
+        retorno1,retorno2,ruta=controller.requerimiento5(edad,cont["req5"],cont["graph"],cont["id"])
+        print("Salida:")
+        print(retorno1)
+        print("-----------------------------------")
+        print("llegada:")
+        print(retorno2)
+        print("---------------------------------------------------")
+        print("Ruta")
+        print(ruta+" segundos")
+
+    elif int(inputs[0]) == 8:
         x
     elif int(inputs[0]) == 10:
        x

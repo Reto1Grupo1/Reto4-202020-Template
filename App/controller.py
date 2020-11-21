@@ -67,6 +67,9 @@ def loadFile(citibike, tripfile):
     for trip in input_file:
         viajes+=1
         model.addTrip(citibike, trip)
+        model.addllegada(citibike,trip["end station name"])
+        model.addid(citibike["id"],trip)
+        model.addreq5(citibike["req5"],trip)
     return viajes
 
 # ___________________________________________________
@@ -94,6 +97,13 @@ def connectedComponents(analyzer):
 
 def requerimiento1(catalog,station1,station2):
     return model.requerimiento1(catalog,station1,station2)
+
+def requerimiento3(graph,mapallegadas,mapaid):
+    return model.requerimiento3(graph,mapallegadas,mapaid)
+
+
 def requemiento4(tiempo,StationI,catalog):
     return model.requerimiento4(tiempo,StationI,catalog)
 
+def requerimiento5(edad,req5,graph,mapid):
+    return model.requerimiento5(edad,req5,graph,mapid)
