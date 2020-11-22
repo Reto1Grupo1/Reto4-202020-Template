@@ -122,7 +122,7 @@ while True:
             for j in range(1,4):
                 print((lt.getElement(lista1,j)))
             print("---------------------------------------------")
-            print("Estaciones de Salida:")
+            print("Estaciones de Llegada:")
             for j in range(1,4):
                 print(lt.getElement(lista2,j))
             print("---------------------------------------------")
