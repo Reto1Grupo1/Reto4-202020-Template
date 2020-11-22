@@ -507,7 +507,8 @@ def requerimiento6(paralati,paralongi,paralatf,paralongf,graph,maplonglat,mapid)
             retorno["tiempo"]=djk.distTo(source,idfinal)
             retorno["ruta"]=djk.pathTo(source,idfinal)
         else:
-            retorno=(" no existe camino entre "+nombreinicial+" y "+nombrefinal)
+
+            retorno=("Estacion cercana a usted: "+ nombreinicial+", estación cercana a su sitio de interés:"+ nombrefinal+". "" No existe camino entre "+nombreinicial+" y "+nombrefinal)
 
         return retorno
 
