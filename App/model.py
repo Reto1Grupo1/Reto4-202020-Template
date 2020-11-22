@@ -33,6 +33,8 @@ from DISClib.DataStructures import listiterator as it
 from DISClib.Algorithms.Graphs import scc as scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
+from haversine import haversine as hv
+ 
 assert config
 
 """
@@ -68,6 +70,7 @@ def newAnalyzer():
     citibike["llegadas"] = m.newMap(numelements=300,maptype="PROBING",loadfactor=0.4,comparefunction=comparellegada)
     citibike["id"] = m.newMap(numelements=300,maptype="PROBING",loadfactor=0.4,comparefunction=comparellegada)
     citibike["req5"]=m.newMap(numelements=300,maptype="PROBING",loadfactor=0.4,comparefunction=comparellegada)
+    citibike["coordenadas"]=m.newMap(numelements=300,maptype="PROBING",loadfactor=0.4,comparefunction=comparellegada)
     return citibike
 
 # Funciones para agregar informacion al grafo
@@ -277,7 +280,24 @@ def addreq5(citibike, trip):
             rangoend["ve60+"]=rangoend["ve60+"]+1
             
         m.put( citibike, trip["end station id"], rangoend)
- 
+ #MAPREQ6
+
+def addcoordenadas(citibike, trip):
+    """
+    Esta función adiciona un libro a la lista de libros publicados
+    por un autor.
+    Cuando se adiciona el libro se actualiza el promedio de dicho autor
+    """
+    exist_id_start = m.contains( citibike,trip["start station id"])
+    if exist_id_start is False:
+        latlong=(float(trip["start station latitude"]),float(trip["start station longitude"]))
+        m.put( citibike, trip["start station id"], latlong)
+    exist_id_end = m.contains( citibike,trip["end station id"])
+    if exist_id_end is False:
+        latlong=(float(trip["end station latitude"]),float(trip["end station longitude"]))
+        m.put( citibike, trip["end station id"],latlong)
+
+
 # ==============================
 # Funciones de consulta
 # ==============================
@@ -305,150 +325,191 @@ def requerimiento1(graph,station1,station2):
     return retorno
 
 def requerimiento3(graph,mapallegadas,mapaid):
-    vertices= gr.vertices(graph)
-    lista1=lt.newList('SINGLE_LINKED')
-    for i in range(1,(lt.size(vertices)+1)):
-        elements1={}
-        element1 =lt.getElement(vertices,i)
-        adyacentes= gr.adjacents(graph,element1)
-        valuetotal1=0
-        for j in range (1,(lt.size(adyacentes)+1)):
-            adjacent1= lt.getElement(adyacentes,j)
-            valuetotal1+=gr.getEdge(graph,element1,adjacent1)["count"]
-        name=m.get(mapaid,element1)
-        name=me.getValue(name)
-        if valuetotal1!=0:
-            elements1["element"]=name
-            elements1["value"]=float(valuetotal1)
-            lt.addLast(lista1,elements1)
-    mg.mergesort(lista1,greater_station)
-    lista1r=lt.newList('SINGLE_LINKED')
-    
-    for j in range(1,4):
-        elemento=((lt.getElement(lista1,j)["element"])+" , salidas:"+str(lt.getElement(lista1,j)["value"]))
-        lt.addLast(lista1r,elemento)
-
-    
-    lista2=lt.newList('SINGLE_LINKED')
-    #print(mapallegadas)
-    vert= m.keySet(mapallegadas)
-    for i in range(1, (lt.size(vert)+1)):
-        vertice=lt.getElement(vert,i)
-        entry= m.get(mapallegadas,vertice)
-        entry= me.getValue(entry)
-        lt.addLast(lista2,entry)
-    
-    mg.mergesort(lista2,greater_station)
-    lista2r=lt.newList('SINGLE_LINKED')
-    for j in range(1,4):
-        elemento=lt.getElement(lista2,j)["element"]+" , llegadas:"+str(lt.getElement(lista2,j)["value"])
-        lt.addLast(lista2r,elemento)
-
-    lista3=lt.newList('SINGLE_LINKED')
-    for i in range(1,(lt.size(vertices)+1)):
-        elements1={}
-        element1 =lt.getElement(vertices,i)
-        adyacentes= gr.adjacents(graph,element1)
-        valuetotal1=0
-        for j in range (1,(lt.size(adyacentes)+1)):
-            adjacent1= lt.getElement(adyacentes,j)
-            valuetotal1+=gr.getEdge(graph,element1,adjacent1)["count"]
-        name=m.get(mapaid,element1)
-        name=me.getValue(name)
-        entry= m.get(mapallegadas,name)
-        entry= me.getValue(entry)["value"]
+        vertices= gr.vertices(graph)
+        lista1=lt.newList('SINGLE_LINKED')
+        for i in range(1,(lt.size(vertices)+1)):
+            elements1={}
+            element1 =lt.getElement(vertices,i)
+            adyacentes= gr.adjacents(graph,element1)
+            valuetotal1=0
+            for j in range (1,(lt.size(adyacentes)+1)):
+                adjacent1= lt.getElement(adyacentes,j)
+                valuetotal1+=gr.getEdge(graph,element1,adjacent1)["count"]
+            name=m.get(mapaid,element1)
+            name=me.getValue(name)
+            if valuetotal1!=0:
+                elements1["element"]=name
+                elements1["value"]=float(valuetotal1)
+                lt.addLast(lista1,elements1)
+        mg.mergesort(lista1,greater_station)
+        lista1r=lt.newList('SINGLE_LINKED')
         
-        if valuetotal1!=0:
-            elements1["element"]=name
-            elements1["value"]=float(valuetotal1+int(entry))
-            lt.addLast(lista3,elements1)
+        for j in range(1,4):
+            elemento=((lt.getElement(lista1,j)["element"])+" , salidas:"+str(lt.getElement(lista1,j)["value"]))
+            lt.addLast(lista1r,elemento)
 
-    mg.mergesort(lista3,less_station)
-    
-    lista3r=lt.newList('SINGLE_LINKED')
-    for j in range(1,4):
-        elemento=lt.getElement(lista3,j)["element"]+" , Salidas:"+str(lt.getElement(lista3,j)["value"])
-        lt.addLast(lista3r,elemento)
-    return lista1r,lista2r,lista3r
+        
+        lista2=lt.newList('SINGLE_LINKED')
+        #print(mapallegadas)
+        vert= m.keySet(mapallegadas)
+        for i in range(1, (lt.size(vert)+1)):
+            vertice=lt.getElement(vert,i)
+            entry= m.get(mapallegadas,vertice)
+            entry= me.getValue(entry)
+            lt.addLast(lista2,entry)
+        
+        mg.mergesort(lista2,greater_station)
+        lista2r=lt.newList('SINGLE_LINKED')
+        for j in range(1,4):
+            elemento=lt.getElement(lista2,j)["element"]+" , llegadas:"+str(lt.getElement(lista2,j)["value"])
+            lt.addLast(lista2r,elemento)
+
+        lista3=lt.newList('SINGLE_LINKED')
+        for i in range(1,(lt.size(vertices)+1)):
+            elements1={}
+            element1 =lt.getElement(vertices,i)
+            adyacentes= gr.adjacents(graph,element1)
+            valuetotal1=0
+            for j in range (1,(lt.size(adyacentes)+1)):
+                adjacent1= lt.getElement(adyacentes,j)
+                valuetotal1+=gr.getEdge(graph,element1,adjacent1)["count"]
+            name=m.get(mapaid,element1)
+            name=me.getValue(name)
+            entry= m.get(mapallegadas,name)
+            entry= me.getValue(entry)["value"]
+            
+            if valuetotal1!=0:
+                elements1["element"]=name
+                elements1["value"]=float(valuetotal1+int(entry))
+                lt.addLast(lista3,elements1)
+
+        mg.mergesort(lista3,less_station)
+        
+        lista3r=lt.newList('SINGLE_LINKED')
+        for j in range(1,4):
+            elemento=lt.getElement(lista3,j)["element"]+" , Salidas:"+str(lt.getElement(lista3,j)["value"])
+            lt.addLast(lista3r,elemento)
+        return lista1r,lista2r,lista3r
+
 def requerimiento5(edad,req5,graph,mapid):
-    verticeinicial=""
-    verticefinal=""
-    vertices=gr.vertices(graph)
-    contador1=0
-    idverticeinicial=0
-    for i in range(lt.size(vertices)):
+
+        verticeinicial=""
+        verticefinal=""
+        vertices=gr.vertices(graph)
+        contador1=0
+        idverticeinicial=0
+        for i in range(lt.size(vertices)):
+            
+            vertice=lt.getElement(vertices,i)
+            entry= m.get(req5,vertice)
         
-        vertice=lt.getElement(vertices,i)
-        entry= m.get(req5,vertice)
-       
-        entry2=me.getValue(entry)
+            entry2=me.getValue(entry)
+            
+            if int(edad)<11:
+                personas=entry2["vs0-10"]
+            elif int(edad)<21:
+                personas=entry2["vs11-20"]
+            elif int(edad)<31:
+                personas=entry2["vs21-30"]
+            elif int(edad)<41:
+                personas=entry2["vs31-40"]
+            elif int(edad)<51:
+                personas=entry2["vs41-50"]
+            elif int(edad)<61:
+                personas=entry2["vs51-60"]
+            else:
+                personas=entry2["vs60+"]
+            if personas>contador1:
+                contador1= personas
+                idverticeinicial= me.getKey(entry)
+        nombre=m.get(mapid,idverticeinicial)
+        nombre=me.getValue(nombre)
+        retorno1={}
+        retorno1["Nombre estacion salida"]=nombre
+        retorno1["Numero de personas en ese rango"]=contador1
+
+
+        contador2=0
+        idverticefinal=0
+        for i in range(lt.size(vertices)):
+            
+            vertice=lt.getElement(vertices,i)
+            entry= m.get(req5,vertice)
         
-        if int(edad)<11:
-            personas=entry2["vs0-10"]
-        elif int(edad)<21:
-            personas=entry2["vs11-20"]
-        elif int(edad)<31:
-            personas=entry2["vs21-30"]
-        elif int(edad)<41:
-            personas=entry2["vs31-40"]
-        elif int(edad)<51:
-            personas=entry2["vs41-50"]
-        elif int(edad)<61:
-            personas=entry2["vs51-60"]
+            entry2=me.getValue(entry)
+            
+            if int(edad)<11:
+                personas=entry2["ve0-10"]
+            elif int(edad)<21:
+                personas=entry2["ve11-20"]
+            elif int(edad)<31:
+                personas=entry2["ve21-30"]
+            elif int(edad)<41:
+                personas=entry2["ve31-40"]
+            elif int(edad)<51:
+                personas=entry2["ve41-50"]
+            elif int(edad)<61:
+                personas=entry2["ve51-60"]
+            else:
+                personas=entry2["ve60+"]
+            if personas>contador2:
+                contador2= personas
+                idverticefinal= me.getKey(entry)
+        nombre2=m.get(mapid,idverticefinal)
+        nombre2=me.getValue(nombre2)
+        retorno2={}
+        retorno2["Nombre estacion llegada: "]=nombre2
+        retorno2["Numero de personas en ese rango: "]=contador2
+
+        source=(djk.Dijkstra(graph,idverticeinicial))
+        exist=djk.hasPathTo(source,idverticefinal)
+        if exist:
+            ruta=("El costo minimo de entre estos dos vertices es de: "+str(djk.distTo(source,idverticefinal)))
         else:
-            personas=entry2["vs60+"]
-        if personas>contador1:
-            contador1= personas
-            idverticeinicial= me.getKey(entry)
-    nombre=m.get(mapid,idverticeinicial)
-    nombre=me.getValue(nombre)
-    retorno1={}
-    retorno1["Nombre estacion salida"]=nombre
-    retorno1["Numero de personas en ese rango"]=contador1
+            ruta=(" no existe camino entre"+nombre+" y "+nombre2)
+        return retorno1,retorno2,ruta
 
 
-    contador2=0
-    idverticefinal=0
-    for i in range(lt.size(vertices)):
+def requerimiento6(paralati,paralongi,paralatf,paralongf,graph,maplonglat,mapid):
+        coordenadaini=(float(paralati),float(paralongi))
+        coordenadafin=(float(paralatf),float(paralongf))
+        vertices= m.keySet(maplonglat)
+        difeinicial=float("inf")
+        idinicial=0
+        difefinal=float("inf")
+        idfinal=0
+        for i in range (1,m.size(maplonglat)+1):
+            vertice=lt.getElement(vertices,i)
+            llavevalor=m.get(maplonglat,vertice)
+            coordenada=me.getValue(llavevalor)
+            ide=me.getKey(llavevalor)
+            diferenciaini=hv(coordenadaini,coordenada)
+            diferenciafinal=hv(coordenadafin,coordenada)
+            if diferenciaini <=difeinicial:
+                difeinicial= diferenciaini
+                idinicial=ide
+            if diferenciafinal<=difefinal:
+                difefinal=diferenciafinal
+                idfinal=ide
+        nombrefinal=m.get(mapid,idfinal)
+        nombrefinal=me.getValue(nombrefinal)
+        nombreinicial=m.get(mapid,idinicial)
+        nombreinicial=me.getValue(nombreinicial)
+        source=djk.Dijkstra(graph,idinicial)
+        exist=djk.hasPathTo(source,idfinal)
+    
+
         
-        vertice=lt.getElement(vertices,i)
-        entry= m.get(req5,vertice)
-       
-        entry2=me.getValue(entry)
-        
-        if int(edad)<11:
-            personas=entry2["ve0-10"]
-        elif int(edad)<21:
-            personas=entry2["ve11-20"]
-        elif int(edad)<31:
-            personas=entry2["ve21-30"]
-        elif int(edad)<41:
-            personas=entry2["ve31-40"]
-        elif int(edad)<51:
-            personas=entry2["ve41-50"]
-        elif int(edad)<61:
-            personas=entry2["ve51-60"]
+        if exist:
+            retorno={} 
+            retorno["estacioninicial"]=nombreinicial
+            retorno["estacionfinal"]=nombrefinal
+            retorno["tiempo"]=djk.distTo(source,idfinal)
+            retorno["ruta"]=djk.pathTo(source,idfinal)
         else:
-            personas=entry2["ve60+"]
-        if personas>contador2:
-            contador2= personas
-            idverticefinal= me.getKey(entry)
-    nombre2=m.get(mapid,idverticefinal)
-    nombre2=me.getValue(nombre2)
-    retorno2={}
-    retorno2["Nombre estacion llegada: "]=nombre2
-    retorno2["Numero de personas en ese rango: "]=contador2
+            retorno=(" no existe camino entre "+nombreinicial+" y "+nombrefinal)
 
-    source=(djk.Dijkstra(graph,idverticeinicial))
-    exist=djk.hasPathTo(source,idverticefinal)
-    if exist:
-        ruta=("El costo minimo de entre estos dos vertices es de: "+str(djk.distTo(source,idverticefinal)))
-    else:
-        ruta=(" no existe camino entre"+nombre+" y "+nombre2)
-    return retorno1,retorno2,ruta
-
-
-
+        return retorno
 
 
 

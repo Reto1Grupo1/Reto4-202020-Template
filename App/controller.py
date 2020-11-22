@@ -70,6 +70,8 @@ def loadFile(citibike, tripfile):
         model.addllegada(citibike,trip["end station name"])
         model.addid(citibike["id"],trip)
         model.addreq5(citibike["req5"],trip)
+        model.addcoordenadas(citibike["coordenadas"],trip)
+
     return viajes
 
 # ___________________________________________________
@@ -107,3 +109,6 @@ def requemiento4(tiempo,StationI,catalog):
 
 def requerimiento5(edad,req5,graph,mapid):
     return model.requerimiento5(edad,req5,graph,mapid)
+
+def requerimiento6(paralati,paralongi,paralatf,paralongf,graph,maplongla,mapid):
+    return model.requerimiento6(paralati,paralongi,paralatf,paralongf,graph,maplongla,mapid)

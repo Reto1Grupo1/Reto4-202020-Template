@@ -30,6 +30,8 @@ import config
 from App import controller
 from DISClib.ADT import stack
 import datetime
+from DISClib.DataStructures import mapentry as me
+from DISClib.ADT import map as m
 import timeit
 from DISClib.ADT.graph import gr
 from DISClib.ADT import list as lt
@@ -114,50 +116,77 @@ while True:
     elif int(inputs[0]) == 4:
         x
     elif int(inputs[0]) == 5:
-        lista1,lista2,lista3=controller.requerimiento3(cont["graph"],cont["llegadas"],cont["id"])
-        print(lista1)
-        print(lista2)
-        print(lista3)
-        print("Estaciones de salida:")
-        for j in range(1,4):
-            print((lt.getElement(lista1,j)))
-        print("---------------------------------------------")
-        print("Estaciones de Salida:")
-        for j in range(1,4):
-            print(lt.getElement(lista2,j))
-        print("---------------------------------------------")
-        print("Estaciones menos usadas")
-        for j in range(1,4):
-            print(lt.getElement(lista3,j))
-
+        try:
+            lista1,lista2,lista3=controller.requerimiento3(cont["graph"],cont["llegadas"],cont["id"])
+            print("Estaciones de salida:")
+            for j in range(1,4):
+                print((lt.getElement(lista1,j)))
+            print("---------------------------------------------")
+            print("Estaciones de Salida:")
+            for j in range(1,4):
+                print(lt.getElement(lista2,j))
+            print("---------------------------------------------")
+            print("Estaciones menos usadas")
+            for j in range(1,4):
+                print(lt.getElement(lista3,j))
+        except :
+            print("Ha habido un erro intente de nuevo.")
     elif int(inputs[0]) == 6:
-        station1=str(input("Estacion Inicial : "))
-        Tiempo=int(input("Tiempo estimado en minutos:"))
-        tr=controller.requemiento4(Tiempo,station1,cont)
-        size=int(lt.size(tr))
-        for i in range(0,size+1):
-            info=lt.getElement(tr,i)
-            peso=str(datetime.timedelta(seconds=int(info["weight"])))
-            print("Estacion Inicial "+str(station1)+" Estacion Final "+str(info["vertexB"]) + " Duracion Estimada "+str(peso[2:7]))
-    elif int(inputs[0]) == 9:
-        x
+            station1=str(input("Estacion Inicial : "))
+            Tiempo=int(input("Tiempo estimado en minutos:"))
+            tr=controller.requemiento4(Tiempo,station1,cont)
+            size=int(lt.size(tr))
+            for i in range(0,size+1):
+                info=lt.getElement(tr,i)
+                peso=str(datetime.timedelta(seconds=int(info["weight"])))
+                print("Estacion Inicial "+str(station1)+" Estacion Final "+str(info["vertexB"]) + " Duracion Estimada "+str(peso[2:7]))
     elif int(inputs[0]) == 7:
-        edad=input("Dígite su edad:")
+        try:
+            edad=input("Dígite su edad:")
 
-        retorno1,retorno2,ruta=controller.requerimiento5(edad,cont["req5"],cont["graph"],cont["id"])
-        print("Salida:")
-        print(retorno1)
-        print("-----------------------------------")
-        print("llegada:")
-        print(retorno2)
-        print("---------------------------------------------------")
-        print("Ruta")
-        print(ruta+" segundos")
-
+            retorno1,retorno2,ruta=controller.requerimiento5(edad,cont["req5"],cont["graph"],cont["id"])
+            print("Salida:")
+            print(retorno1)
+            print("-----------------------------------")
+            print("llegada:")
+            print(retorno2)
+            print("---------------------------------------------------")
+            print("Ruta")
+            print(ruta+" segundos")
+        except:
+            print("Ha habido un error intente de nuevo.")
     elif int(inputs[0]) == 8:
+        try:
+            latini=input(" Digite la latitud en la que se encuentra:")
+            longini=input(" Digite la longitud en la que se encuentra:")
+            latifin=input(" Digite la latitud en del sitio de su interés:")
+            longfin=input(" Digite la longitud en del sitio de su interés:")
+            retorno=controller.requerimiento6(latini,longini,latifin,longfin,cont["graph"],cont["coordenadas"],cont["id"])
+            if type(retorno) is str:
+                print (retorno)
+            else:
+                print("Estación más cercana a su ubicación "+retorno["estacioninicial"])
+                print("Estación más cercana a su sitio de interés "+retorno["estacionfinal"])
+                print("-------------------------------------------------------")
+                print ("El tiempo estimado es: "+str(retorno["tiempo"])+" segundos.")
+                print("-------------------------------------------------------")
+                print("La ruta que debe seguir es:")
+                (retorno["ruta"])
+                for i in range(1,lt.size(retorno["ruta"])+1):
+                    a=lt.getElement(retorno["ruta"],i)["vertexA"]
+                    a=m.get(cont["id"],a)
+                    a=me.getValue(a)
+                    b=lt.getElement(retorno["ruta"],i)["vertexB"]
+                    b=m.get(cont["id"],b)
+                    b=me.getValue(b)
+                    print(a+"   ->  "+b)
+        except:
+            print("Ha habido un error intente de nuevo.")
+
+    elif int(inputs[0]) ==9 :
         x
     elif int(inputs[0]) == 10:
-       x
+        x
     else:
         sys.exit(0)
 sys.exit(0)
