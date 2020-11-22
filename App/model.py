@@ -501,8 +501,9 @@ def requerimiento6(paralati,paralongi,paralatf,paralongf,graph,maplonglat,mapid)
         exist=djk.hasPathTo(source,idfinal)
     
 
-        
-        if exist:
+        if nombrefinal== nombreinicial:
+            retorno= ("La estacion más cercana de su ubicación y su lugar de interés es la misma:  "+ nombrefinal) 
+        elif exist:
             retorno={} 
             retorno["estacioninicial"]=nombreinicial
             retorno["estacionfinal"]=nombrefinal
