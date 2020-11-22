@@ -79,12 +79,14 @@ def addTrip(citibike, trip):
     """
     """
     try:
+
         origin = trip['start station id']
         destination = trip['end station id']
-        duration = int(trip['tripduration'])
-        addStation(citibike, origin)
-        addStation(citibike, destination)
-        addConnection(citibike, origin, destination, duration)
+        if origin != destination:
+            duration = int(trip['tripduration'])
+            addStation(citibike, origin)
+            addStation(citibike, destination)
+            addConnection(citibike, origin, destination, duration)
     except Exception as exp:
         error.reraise(exp, 'model:addTrip')
 
@@ -118,7 +120,7 @@ def addConnection(citibike, origin, destination, duration):
     return citibike
 
 ###FUNCIONES AGREGAR INFO A MAPS
-###MAP LLEGADAS
+##MAP LLEGADAS
 def addllegada(citibike, llegada):
     """
     Esta función adiciona un libro a la lista de libros publicados
