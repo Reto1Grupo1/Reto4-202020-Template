@@ -118,6 +118,7 @@ def stronglyConnected(scc, verta, vertb):
     except Exception as exp:
         error.reraise(exp, 'dfo:Sconnected')
 
+
 def connectedComponents(scc):
     """
     Retorna el numero de componentes conectados
