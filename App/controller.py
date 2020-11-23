@@ -56,7 +56,20 @@ def loadTrips(citibike):
             viajes+=loadFile(citibike, filename)
     print("viajes totales: "+str(viajes))
     return citibike
-
+def loadTripsAge(citibike,IRango,FRango):
+    for filename in os.listdir(cf.data_dir):
+        if filename.endswith('.csv'):
+            print('Cargando archivo: ' + filename)
+            loadFileAge(citibike, filename,IRango,FRango)
+    return citibike
+def loadFileAge(citibike, tripfile,IRango,FRango):
+    """
+    """
+    tripfile = cf.data_dir + tripfile
+    input_file = csv.DictReader(open(tripfile, encoding="utf-8"),
+                                delimiter=",")
+    for trip in input_file:
+        model.addTripAge(citibike, trip,IRango,FRango)
 def loadFile(citibike, tripfile):
     """
     """
@@ -112,3 +125,6 @@ def requerimiento5(edad,req5,graph,mapid):
 
 def requerimiento6(paralati,paralongi,paralatf,paralongf,graph,maplongla,mapid):
     return model.requerimiento6(paralati,paralongi,paralatf,paralongf,graph,maplongla,mapid)
+
+def requerimiento7(catalog):
+    return model.requerimiento7(catalog)

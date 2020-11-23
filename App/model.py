@@ -67,6 +67,10 @@ def newAnalyzer():
                                           directed=True,
                                           size=300,
                                           comparefunction=compareStopIds)
+    citibike['Age'] = gr.newGraph(datastructure='ADJ_LIST',
+                                          directed=True,
+                                          size=300,
+                                          comparefunction=compareStopIds)
     citibike["llegadas"] = m.newMap(numelements=300,maptype="PROBING",loadfactor=0.4,comparefunction=comparellegada)
     citibike["id"] = m.newMap(numelements=300,maptype="PROBING",loadfactor=0.4,comparefunction=comparellegada)
     citibike["req5"]=m.newMap(numelements=300,maptype="PROBING",loadfactor=0.4,comparefunction=comparellegada)
@@ -118,6 +122,62 @@ def addConnection(citibike, origin, destination, duration):
     else:
         updateAverageWeight(edge,duration)
     return citibike
+def addTrip(citibike, trip):
+    """
+    """
+    try:
+
+        origin = trip['start station id']
+        destination = trip['end station id']
+        if origin != destination:
+            duration = int(trip['tripduration'])
+            addStation(citibike, origin)
+            addStation(citibike, destination)
+            addConnection(citibike, origin, destination, duration)
+    except Exception as exp:
+        error.reraise(exp, 'model:addTrip')
+
+def addTripAge(citibike, trip,IRango,FRango):
+    """
+    """
+    try:
+        Menor=int(IRango)
+        Mayor=int(FRango)
+        origin = trip['start station name']
+        destination = trip['end station name']
+        Age = int(trip['birth year'])
+        cliente=trip['usertype']
+        if origin != destination:
+            if Menor<=(2020-Age)<=Mayor and cliente=="Customer":
+                addStationAge(citibike, origin)
+                addStationAge(citibike, destination)
+                addConnectionAge(citibike, origin, destination, Age)
+    except Exception as exp:
+        error.reraise(exp, 'model:addTrip')
+
+def addStationAge(citibike, stationid):
+    """
+    Adiciona un viaje como un vertice del grafo
+    """
+    try:
+        if not gr.containsVertex(citibike['Age'], stationid):
+            gr.insertVertex(citibike['Age'], stationid)
+        return citibike
+    except Exception as exp:
+        error.reraise(exp, 'model:addStation')
+        
+def addConnectionAge(citibike, origin, destination, duration):
+    """
+    Adiciona un arco entre dos estaciones
+    """
+    edge = gr.getEdge(citibike ["Age"], origin, destination)
+    if edge is None:
+        gr.addEdge(citibike["Age"], origin, destination, duration)
+    else:
+        updateAverageWeight(edge,duration)
+    return citibike
+
+    
 
 ###FUNCIONES AGREGAR INFO A MAPS
 ##MAP LLEGADAS
@@ -529,6 +589,27 @@ def requerimiento4(time,InitialS,citibike):
         if MaxTime <= time:
             lt.addLast(Lista,Arco)
     return Lista
+    
+def requerimiento7(citibike):
+    Mayor=0
+    Listav=gr.vertices(citibike["Age"])
+    EstacionesAd=lt.newList('SINGLE_LINKED',compareIds)
+    ListaF=lt.newList('SINGLE_LINKED',compareIds)
+    for i in range(1,int(lt.size(Listav))+1):
+        vertice=lt.getElement(Listav,i)
+        ListaAdj=gr.adjacentEdges(citibike["Age"],str(vertice))
+        for j in range(1,lt.size(ListaAdj)+1):
+            Arco=lt.getElement(ListaAdj,j)
+            Numero=int(lt.getElement(ListaAdj,j)["count"])
+            if Numero>=Mayor: 
+                Mayor=Numero
+                lt.addLast(EstacionesAd,Arco)
+
+    for k in range(1,lt.size(EstacionesAd)+1):
+        Actuazion=lt.getElement(EstacionesAd,k)
+        if int(lt.getElement(EstacionesAd,k)["count"])>=Mayor:
+            lt.addLast(ListaF,Actuazion)
+    return ListaF
 
 
 

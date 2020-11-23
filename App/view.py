@@ -68,7 +68,7 @@ def printMenu():
     print("6- Ruta turística por resistencia ")
     print("7- Recomendador de Rutas  ")
     print("8- Ruta de interés turístico   ")
-    print("9- Identificación de Estaciones para Publicidad ")  
+    print("9- Buscador de estaciones adyacentes ")  
     print("10-  Identificación de Bicicletas para Mantenimiento ")  
 
 
@@ -184,7 +184,15 @@ while True:
             print("Ha habido un error intente de nuevo.")
 
     elif int(inputs[0]) ==9 :
-        x
+        print("Rango de edad :  ")
+        IRango=input("Inicio Rango: ")
+        FRango=input("Final Rango: ")
+        controller.loadTripsAge(cont,IRango,FRango)
+        A=controller.requerimiento7(cont)
+        print("Las estaciones adyacentes que más utilizan las personas de este rango de edad son ")
+        for k in range(1,lt.size(A)+1):
+            print(str(lt.getElement(A,int(k))["vertexA"])+" hacia "+str(lt.getElement(A,int(k))["vertexB"]))
+            print("Total de viajes: "+str(lt.getElement(A,int(k))["count"]))
     elif int(inputs[0]) == 10:
         x
     else:
