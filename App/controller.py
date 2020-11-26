@@ -59,7 +59,6 @@ def loadTrips(citibike):
 def loadTripsAge(citibike,IRango,FRango):
     for filename in os.listdir(cf.data_dir):
         if filename.endswith('.csv'):
-            print('Cargando archivo: ' + filename)
             loadFileAge(citibike, filename,IRango,FRango)
     return citibike
 def loadFileAge(citibike, tripfile,IRango,FRango):
@@ -70,6 +69,21 @@ def loadFileAge(citibike, tripfile,IRango,FRango):
                                 delimiter=",")
     for trip in input_file:
         model.addTripAge(citibike, trip,IRango,FRango)
+        
+def loadTripsDay(citibike,Dia,Id):
+    for filename in os.listdir(cf.data_dir):
+        if filename.endswith('.csv'):
+            loadFileDia(citibike,filename,Dia,Id)
+    return citibike
+def loadFileDia(citibike,tripfile,Dia,Id):
+    """
+    """
+    tripfile = cf.data_dir + tripfile
+    input_file = csv.DictReader(open(tripfile, encoding="utf-8"),
+                                delimiter=",")
+    for trip in input_file:
+        model.addTripDia(citibike,trip,Dia,Id)
+
 def loadFile(citibike, tripfile):
     """
     """
@@ -113,9 +127,11 @@ def connectedComponents(analyzer):
 def requerimiento1(catalog,station1,station2):
     return model.requerimiento1(catalog,station1,station2)
 
+def requerimiento2(catalog,tiempo,idestacion):
+    return model.requerimiento2(catalog,tiempo,idestacion)
+
 def requerimiento3(graph,mapallegadas,mapaid):
     return model.requerimiento3(graph,mapallegadas,mapaid)
-
 
 def requemiento4(tiempo,StationI,catalog):
     return model.requerimiento4(tiempo,StationI,catalog)
@@ -128,3 +144,6 @@ def requerimiento6(paralati,paralongi,paralatf,paralongf,graph,maplongla,mapid):
 
 def requerimiento7(catalog):
     return model.requerimiento7(catalog)
+
+def requerimiento8(catalog):
+    return model.requerimiento8(catalog)

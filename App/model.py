@@ -26,11 +26,13 @@
 import config
 from DISClib.ADT.graph import gr
 from DISClib.ADT import map as m
+from DISClib.ADT import stack as stack
 from DISClib.ADT import list as lt
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import mergesort as mg
 from DISClib.DataStructures import listiterator as it
 from DISClib.Algorithms.Graphs import scc as scc
+from DISClib.Algorithms.Graphs import dfs as dfs
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
 from haversine import haversine as hv
@@ -68,6 +70,10 @@ def newAnalyzer():
                                           size=300,
                                           comparefunction=compareStopIds)
     citibike['Age'] = gr.newGraph(datastructure='ADJ_LIST',
+                                          directed=True,
+                                          size=300,
+                                          comparefunction=compareStopIds)
+    citibike['Day'] = gr.newGraph(datastructure='ADJ_LIST',
                                           directed=True,
                                           size=300,
                                           comparefunction=compareStopIds)
@@ -155,6 +161,21 @@ def addTripAge(citibike, trip,IRango,FRango):
     except Exception as exp:
         error.reraise(exp, 'model:addTrip')
 
+def addTripDia(citibike,trip,Dia,Id):
+    try:
+        origin = trip['start station name']
+        destination = trip['end station name']
+        Day = trip['starttime']
+        Day = Day[0:10]
+        if origin != destination:
+            if Dia == Day:
+                if Id==trip["bikeid"]:
+                    addStationDia(citibike, origin)
+                    addStationDia(citibike, destination)
+                    addConnectionDia(citibike, origin, destination, int(trip["tripduration"]))
+    except Exception as exp:
+        error.reraise(exp, 'model:addTrip')
+
 def addStationAge(citibike, stationid):
     """
     Adiciona un viaje como un vertice del grafo
@@ -177,7 +198,27 @@ def addConnectionAge(citibike, origin, destination, duration):
         updateAverageWeight(edge,duration)
     return citibike
 
-    
+def addStationDia(citibike, stationid):
+    """
+    Adiciona un viaje como un vertice del grafo
+    """
+    try:
+        if not gr.containsVertex(citibike['Day'], stationid):
+            gr.insertVertex(citibike['Day'], stationid)
+        return citibike
+    except Exception as exp:
+        error.reraise(exp, 'model:addStation')
+        
+def addConnectionDia(citibike, origin, destination, duration):
+    """
+    Adiciona un arco entre dos estaciones
+    """
+    edge = gr.getEdge(citibike ["Day"], origin, destination)
+    if edge is None:
+        gr.addEdge(citibike["Day"], origin, destination, duration)
+    else:
+        updateAverageWeight(edge,duration)
+    return citibike
 
 ###FUNCIONES AGREGAR INFO A MAPS
 ##MAP LLEGADAS
@@ -611,19 +652,76 @@ def requerimiento7(citibike):
             lt.addLast(ListaF,Actuazion)
     return ListaF
 
+def requerimiento2(citibike,tiempo,idestacion):
 
+    listaadyacentes=gr.adjacentEdges(citibike["graph"],idestacion)
+    listaestaciones=lt.newList('SINGLE_LINKED', compareIds)
 
+    for i in range(1,lt.size(listaadyacentes)+1):
+        arco=lt.getElement(listaadyacentes,i)
+        if arco["vertexA"]==idestacion:
+            lt.addLast(listaestaciones,arco["vertexB"])
 
+    supachato=scc.KosarajuSCC(citibike["graph"])
+    fuertementeconectados=lt.newList('SINGLE_LINKED', compareIds)
 
+    for i in range(1,lt.size(listaestaciones)+1):
+        verticeB=lt.getElement(listaestaciones,i)
+        if scc.stronglyConnected(supachato,idestacion,verticeB):
+            lt.addLast(fuertementeconectados,verticeB)
 
+    listadepilas=lt.newList('SINGLE_LINKED', compareIds)
 
+    for i in range(1,lt.size(fuertementeconectados)+1):
+        vertice=lt.getElement(fuertementeconectados,i)
+        matenme=dfs.DepthFirstSearch(citibike["graph"],vertice)
+        pila=dfs.pathTo(matenme,idestacion)
+        print(pila)
+        lt.addLast(listadepilas,pila)
 
+    listadeciclos=lt.newList('SINGLE_LINKED', compareIds)
 
+    for i in range(1,lt.size(listadepilas)+1):
+        listanueva=lt.newList('SINGLE_LINKED', compareIds)
+        pila=lt.getElement(listadepilas,i)
+        for j in range(1,stack.size(pila)+1):
+            k=stack.pop(pila)
+            lt.addLast(listanueva,k)
+        lt.addLast(listadeciclos,listanueva)
 
+    listadefinitiva=lt.newList('SINGLE_LINKED', compareIds)
 
+    for i in range(1,lt.size(listadeciclos)+1):
+        ciclo=lt.getElement(listadeciclos,i)
+        peso=0
+        for j in range(1,lt.size(ciclo)):
+            verticeA=lt.getElement(ciclo,j)
+            verticeB=lt.getElement(ciclo,(j+1))
+            arco=gr.getEdge(citibike["graph"],verticeA,verticeB)
+            peso+=int(arco["weight"])
+        peso=peso+((lt.size(ciclo))*1200)
+        peso=peso/60
+        if peso<=tiempo:
+            lt.addLast(listadefinitiva,ciclo)
+    
+    if lt.isEmpty(listadefinitiva):
+        return False
+    else:
+        return listadefinitiva
 
-
-
+def requerimiento8(citibike):
+    Lista=gr.edges(citibike["Day"])
+    enmovimiento=0
+    for i in range(1,lt.size(Lista)+1):
+        edge=lt.getElement(Lista,i)
+        enmovimiento=enmovimiento+int(edge["weight"])
+    enestacionamiento=86400-enmovimiento
+    estaciones=gr.vertices(citibike["Day"])
+    retorno=lt.newList('SINGLE_LINKED', compareIds)
+    lt.addLast(retorno,enmovimiento)
+    lt.addLast(retorno,enestacionamiento)
+    lt.addLast(retorno,estaciones)
+    return retorno
 
 def numSCC(graph):
     sc = scc.KosarajuSCC(graph)

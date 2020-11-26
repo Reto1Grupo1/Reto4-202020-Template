@@ -94,7 +94,7 @@ while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n>')
 
-    if int(inputs[0]) == 1:
+    if int(inputs) == 1:
         print("\nInicializando....")
         # cont es el controlador que se usará de acá en adelante
         cont = controller.init()
@@ -114,7 +114,24 @@ while True:
         print(lt.lastElement(lo))
 
     elif int(inputs[0]) == 4:
-        x
+        try:
+            tiempo=int(input("Digite el tiempo disponible: "))
+            idestacion=input("Digite la id de la estacion: ")
+            retorno=controller.requerimiento2(cont,tiempo,idestacion)
+            if retorno != False:
+                print("-----------")
+                print("Las rutas circulares que se cumplen dentro del rango de tiempo son: ")
+                for i in range(1,lt.size(retorno)+1):
+                    ciclo=lt.getElement(retorno,i)
+                    for j in range(1,lt.size(ciclo)+1):
+                        print(lt.getElement(ciclo,j))
+                    print("------------")
+            else:
+                print("No hay ruta circular para volver a la estacion")
+        except:
+            print("Ocurrio un error ejecutando el programa")
+
+
     elif int(inputs[0]) == 5:
         try:
             lista1,lista2,lista3=controller.requerimiento3(cont["graph"],cont["llegadas"],cont["id"])
@@ -193,8 +210,22 @@ while True:
         for k in range(1,lt.size(A)+1):
             print(str(lt.getElement(A,int(k))["vertexA"])+" hacia "+str(lt.getElement(A,int(k))["vertexB"]))
             print("Total de viajes: "+str(lt.getElement(A,int(k))["count"]))
-    elif int(inputs[0]) == 10:
-        x
+
+    elif int(inputs) == 10:
+        Dia=input("Digite el dia a investigar (AAAA-MM-DD): ")
+        Id=input("Digite la id de la biccleta: ")
+        controller.loadTripsDay(cont,Dia,Id)
+        retorno=controller.requerimiento8(cont)
+        print("--------------")
+        print("Los segundos totales que se uso la bicicleta fueron: "+str(lt.getElement(retorno,1)))
+        print("--------------")
+        print("Los segundos totales que la bicicleta estuvo parqueada fueron: "+str(lt.getElement(retorno,2)))
+        print("--------------")
+        print("Las estaciones por las que paso la bicicleta fueron: ")
+        vertices=lt.getElement(retorno,3)
+        for i in range(1,lt.size(vertices)+1):
+            elemento=lt.getElement(vertices,i)
+            print(elemento)
     else:
         sys.exit(0)
 sys.exit(0)
