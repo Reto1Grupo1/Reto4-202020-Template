@@ -149,14 +149,19 @@ while True:
         except :
             print("Ha habido un erro intente de nuevo.")
     elif int(inputs[0]) == 6:
-            station1=str(input("Estacion Inicial : "))
-            Tiempo=int(input("Tiempo estimado en minutos:"))
-            tr=controller.requemiento4(Tiempo,station1,cont)
-            size=int(lt.size(tr))
-            for i in range(0,size+1):
-                info=lt.getElement(tr,i)
-                peso=str(datetime.timedelta(seconds=int(info["weight"])))
-                print("Estacion Inicial "+str(station1)+" Estacion Final "+str(info["vertexB"]) + " Duracion Estimada "+str(peso[2:7]))
+        station1=str(input("Estacion Inicial : "))
+        Tiempo=int(input("Tiempo estimado en minutos:"))
+        Lista=controller.requemiento4(Tiempo,station1,cont)
+        E1=m.get(cont["Nombre"],station1)
+        Size=int(lt.size(Lista)+1)
+
+        for i in range(1,Size):
+            Dato=lt.getElement(Lista,i)
+            S=lt.size(Dato)
+            f=str(lt.firstElement(Dato))
+            q=str(lt.lastElement(Dato))
+            y=str(lt.getElement(Dato,2))
+            print("Estacion Inicio: "+str(E1)+" Estaciones Intermedias "+ str(f) +" \nEstacion Final "+str(y)+" Tiempo "+str(q))      
     elif int(inputs[0]) == 7:
         try:
             edad=input("Dígite su edad:")
@@ -201,16 +206,18 @@ while True:
             print("Ha habido un error intente de nuevo.")
 
     elif int(inputs[0]) ==9 :
-        print("Rango de edad :  ")
-        IRango=input("Inicio Rango: ")
-        FRango=input("Final Rango: ")
-        controller.loadTripsAge(cont,IRango,FRango)
-        A=controller.requerimiento7(cont)
-        print("Las estaciones adyacentes que más utilizan las personas de este rango de edad son ")
-        for k in range(1,lt.size(A)+1):
-            print(str(lt.getElement(A,int(k))["vertexA"])+" hacia "+str(lt.getElement(A,int(k))["vertexB"]))
-            print("Total de viajes: "+str(lt.getElement(A,int(k))["count"]))
-
+        try:
+            print("Rango de edad :  ")
+            IRango=input("Inicio Rango: ")
+            FRango=input("Final Rango: ")
+            controller.loadTripsAge(cont,IRango,FRango)
+            A=controller.requerimiento7(cont)
+            print("Las estaciones adyacentes que más utilizan las personas de este rango de edad son ")
+            for k in range(1,lt.size(A)+1):
+                print(str(lt.getElement(A,int(k))["vertexA"])+" hacia "+str(lt.getElement(A,int(k))["vertexB"]))
+                print("Total de viajes: "+str(lt.getElement(A,int(k))["count"]))
+        except:
+            print("Ha habido un error intente de nuevo.")
     elif int(inputs) == 10:
         Dia=input("Digite el dia a investigar (AAAA-MM-DD): ")
         Id=input("Digite la id de la biccleta: ")

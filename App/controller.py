@@ -61,6 +61,8 @@ def loadTripsAge(citibike,IRango,FRango):
         if filename.endswith('.csv'):
             loadFileAge(citibike, filename,IRango,FRango)
     return citibike
+
+
 def loadFileAge(citibike, tripfile,IRango,FRango):
     """
     """
@@ -98,6 +100,7 @@ def loadFile(citibike, tripfile):
         model.addid(citibike["id"],trip)
         model.addreq5(citibike["req5"],trip)
         model.addcoordenadas(citibike["coordenadas"],trip)
+        model.addNombre(citibike["Nombre"],trip)
 
     return viajes
 

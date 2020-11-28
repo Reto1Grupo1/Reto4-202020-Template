@@ -62,7 +62,8 @@ def newAnalyzer():
                 'graph': None,
                 "llegadas":None,
                 "id":None,
-                "req5":None
+                "req5":None,
+                "Nombre":None
                 }
 
     citibike['graph'] = gr.newGraph(datastructure='ADJ_LIST',
@@ -77,6 +78,7 @@ def newAnalyzer():
                                           directed=True,
                                           size=300,
                                           comparefunction=compareStopIds)
+    citibike["Nombre"] = m.newMap(numelements=300,maptype="PROBING",loadfactor=0.4,comparefunction=comparellegada)
     citibike["llegadas"] = m.newMap(numelements=300,maptype="PROBING",loadfactor=0.4,comparefunction=comparellegada)
     citibike["id"] = m.newMap(numelements=300,maptype="PROBING",loadfactor=0.4,comparefunction=comparellegada)
     citibike["req5"]=m.newMap(numelements=300,maptype="PROBING",loadfactor=0.4,comparefunction=comparellegada)
@@ -99,6 +101,14 @@ def addTrip(citibike, trip):
             addConnection(citibike, origin, destination, duration)
     except Exception as exp:
         error.reraise(exp, 'model:addTrip')
+def addNombre(citibike,trip):
+    try:
+        llave = trip['start station id']
+        valor =trip['start station name']
+        m.put(citibike,llave,valor)
+    except Exception as exp:
+        error.reraise(exp, 'model:addTrip')
+
 
 
 def addStation(citibike, stationid):
@@ -128,7 +138,7 @@ def addConnection(citibike, origin, destination, duration):
     else:
         updateAverageWeight(edge,duration)
     return citibike
-def addTrip(citibike, trip):
+
     """
     """
     try:
@@ -620,17 +630,55 @@ def requerimiento6(paralati,paralongi,paralatf,paralongf,graph,maplonglat,mapid)
 
 
 def requerimiento4(time,InitialS,citibike):
-    time=int(time)*60
-    rango=int(gr.outdegree(citibike["graph"],str(InitialS)))
-    listD=gr.adjacentEdges(citibike["graph"],str(InitialS))
-    Lista=lt.newList("ARRAY_LIST",compareIds)
-    for i in range(1,int(rango+1)):
-        Arco=lt.getElement(listD,i)
-        MaxTime=int(Arco["weight"])
-        if MaxTime <= time:
-            lt.addLast(Lista,Arco)
-    return Lista
+
+    time=int(time)                                          #Cambio S-M
+    listD=gr.vertices(citibike["graph"])                          
+    Recorrido=dfs.DepthFirstSearch(citibike["graph"],InitialS)  
+    ListaPilas=lt.newList('SINGLE_LINKED', compareIds)             
+    for i in range(1,lt.size(listD)+1):
+        vertice2=lt.getElement(listD,i)
+        if dfs.pathTo(Recorrido,vertice2) and InitialS!=vertice2 :
+            Pila=dfs.pathTo(Recorrido,vertice2)
+            lt.addLast(ListaPilas,Pila)
+ ## Se buscan los Vertices que se conecten a Initial S
     
+    listadeciclos=lt.newList('SINGLE_LINKED', compareIds)
+
+    for r in range(1,lt.size(ListaPilas)+1):
+        listanueva=lt.newList('SINGLE_LINKED', compareIds)
+        pila=lt.getElement(ListaPilas,r)
+        for j in range(1,stack.size(pila)+1):
+            k=stack.pop(pila)
+            lt.addLast(listanueva,k)
+        lt.addLast(listadeciclos,listanueva)
+
+    listaF=lt.newList('SINGLE_LINKED', compareIds)
+    for i in range(1,lt.size(listadeciclos)+1):
+        EstacionesI=0
+        Viaje=lt.newList('SINGLE_LINKED', compareIds)
+        ciclo=lt.getElement(listadeciclos,i)
+        peso=0
+        for j in range(1,lt.size(ciclo)):
+            verticeA=lt.getElement(ciclo,j)
+            Ultimo=lt.lastElement(ciclo)
+            verticeB=lt.getElement(ciclo,(j+1))
+            arco=gr.getEdge(citibike["graph"],verticeA,verticeB)
+            EstacionesI+=1
+            peso+=int(arco["weight"])
+        lt.addLast(Viaje,EstacionesI)
+        lt.addLast(Viaje,Ultimo)
+        peso=peso/60
+        lt.addLast(Viaje,peso)
+        if peso<=time:
+            lt.addLast(listaF,Viaje)
+    if lt.isEmpty(listaF):
+        return False
+    else:
+        return listaF
+
+    
+
+
 def requerimiento7(citibike):
     Mayor=0
     Listav=gr.vertices(citibike["Age"])
@@ -654,21 +702,23 @@ def requerimiento7(citibike):
 
 def requerimiento2(citibike,tiempo,idestacion):
 
-    listaadyacentes=gr.adjacentEdges(citibike["graph"],idestacion)
-    listaestaciones=lt.newList('SINGLE_LINKED', compareIds)
+    listaadyacentes=gr.adjacentEdges(citibike["graph"],idestacion)  ##Haya los arcos del Vertice Inicial ##
+    listaestaciones=lt.newList('SINGLE_LINKED', compareIds)    ##Crea Lista
 
-    for i in range(1,lt.size(listaadyacentes)+1):
-        arco=lt.getElement(listaadyacentes,i)
-        if arco["vertexA"]==idestacion:
-            lt.addLast(listaestaciones,arco["vertexB"])
+    for i in range(1,lt.size(listaadyacentes)+1):       ##Hace un recorrido por la lista de arcos
+        arco=lt.getElement(listaadyacentes,i)          
+        if arco["vertexA"]==idestacion:                       
+            lt.addLast(listaestaciones,arco["vertexB"])    ##Agrefa El vetice B de los Arcos Iniciales  ##
+##No necesito
 
-    supachato=scc.KosarajuSCC(citibike["graph"])
+    supachato=scc.KosarajuSCC(citibike["graph"])               
     fuertementeconectados=lt.newList('SINGLE_LINKED', compareIds)
 
     for i in range(1,lt.size(listaestaciones)+1):
         verticeB=lt.getElement(listaestaciones,i)
         if scc.stronglyConnected(supachato,idestacion,verticeB):
             lt.addLast(fuertementeconectados,verticeB)
+##Agrega los fuertemente conectados a una lista 
 
     listadepilas=lt.newList('SINGLE_LINKED', compareIds)
 
@@ -676,21 +726,19 @@ def requerimiento2(citibike,tiempo,idestacion):
         vertice=lt.getElement(fuertementeconectados,i)
         matenme=dfs.DepthFirstSearch(citibike["graph"],vertice)
         pila=dfs.pathTo(matenme,idestacion)
-        print(pila)
         lt.addLast(listadepilas,pila)
 
     listadeciclos=lt.newList('SINGLE_LINKED', compareIds)
 
     for i in range(1,lt.size(listadepilas)+1):
         listanueva=lt.newList('SINGLE_LINKED', compareIds)
-        pila=lt.getElement(listadepilas,i)
+        pila=lt.getElement(listadepilas,i)  
         for j in range(1,stack.size(pila)+1):
             k=stack.pop(pila)
             lt.addLast(listanueva,k)
         lt.addLast(listadeciclos,listanueva)
-
     listadefinitiva=lt.newList('SINGLE_LINKED', compareIds)
-
+    
     for i in range(1,lt.size(listadeciclos)+1):
         ciclo=lt.getElement(listadeciclos,i)
         peso=0
