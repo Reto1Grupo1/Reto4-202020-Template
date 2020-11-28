@@ -166,7 +166,7 @@ while True:
         try:
             edad=input("Dígite su edad:")
 
-            retorno1,retorno2,ruta=controller.requerimiento5(edad,cont["req5"],cont["graph"],cont["id"])
+            retorno1,retorno2,ruta,ruta2=controller.requerimiento5(edad,cont["req5"],cont["graph"],cont["id"])
             print("Salida:")
             print(retorno1)
             print("-----------------------------------")
@@ -175,8 +175,17 @@ while True:
             print("---------------------------------------------------")
             print("Ruta")
             print(ruta+" segundos")
+            for i in range(1,lt.size(ruta2)+1):
+                    a=lt.getElement(ruta2,i)["vertexA"]
+                    a=m.get(cont["id"],a)
+                    a=me.getValue(a)
+                    b=lt.getElement(ruta2,i)["vertexB"]
+                    b=m.get(cont["id"],b)
+                    b=me.getValue(b)
+                    print(a+"   ->  "+b)
         except:
-            print("Ha habido un error intente de nuevo.")
+            print("Ha habido un error, intente de nuevo")
+
     elif int(inputs[0]) == 8:
         try:
             latini=input(" Digite la latitud en la que se encuentra:")

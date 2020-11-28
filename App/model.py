@@ -576,11 +576,14 @@ def requerimiento5(edad,req5,graph,mapid):
 
         source=(djk.Dijkstra(graph,idverticeinicial))
         exist=djk.hasPathTo(source,idverticefinal)
+        ruta2=0
         if exist:
+            ruta2=djk.pathTo(source,idverticefinal)
             ruta=("El costo minimo de entre estos dos vertices es de: "+str(djk.distTo(source,idverticefinal)))
         else:
             ruta=(" no existe camino entre"+nombre+" y "+nombre2)
-        return retorno1,retorno2,ruta
+        return retorno1,retorno2,ruta,ruta2
+
 
 
 def requerimiento6(paralati,paralongi,paralatf,paralongf,graph,maplonglat,mapid):
